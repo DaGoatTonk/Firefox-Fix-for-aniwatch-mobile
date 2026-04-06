@@ -1,0 +1,66 @@
+// ==UserScript==
+// @name         MegaCloud Domain Redirect
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Redirects megacloud.blog to megacloud.tv on aniwatchtv.to
+// @author       You
+// @match        *://*.aniwatchtv.to/*
+// @match        *://*.megacloud.blog/*
+// @grant        none
+// @run-at       document-start
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  // If we landed directly on the old domain, bounce immediately
+  if (location.hostname.includes('megacloud.blog')) {
+    location.replace(location.href.replace('megacloud.blog', 'megacloud.tv'));
+    return;
+  }
+
+  // Intercept fetch() calls made by the page
+  const originalFetch = window.fetch;
+  window.fetch = function (input, init) {
+    if (typeof input === 'string') {
+      input = input.replace(/megacloud\.blog/g, 'megacloud.tv');
+    } else if (input instanceof Request) {
+      input = new Request(input.url.replace(/megacloud\.blog/g, 'megacloud.tv'), input);
+    }
+    return originalFetch.call(this, input, init);
+  };
+
+  // Intercept XMLHttpRequest calls
+  const originalOpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+    if (typeof url === 'string') {
+      url = url.replace(/megacloud\.blog/g, 'megacloud.tv');
+    }
+    return originalOpen.call(this, method, url, ...rest);
+  };
+
+  // Rewrite any <script src>, <iframe src>, <source src> already in the DOM
+  // and watch for new ones injected later
+  function rewriteNode(node) {
+    if (!node || !node.getAttribute) return;
+    ['src', 'href', 'data-src'].forEach(attr => {
+      const val = node.getAttribute(attr);
+      if (val && val.includes('megacloud.blog')) {
+        node.setAttribute(attr, val.replace(/megacloud\.blog/g, 'megacloud.tv'));
+      }
+    });
+  }
+
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => m.addedNodes.forEach(n => {
+      rewriteNode(n);
+      if (n.querySelectorAll) {
+        n.querySelectorAll('[src*="megacloud.blog"],[href*="megacloud.blog"],[data-src*="megacloud.blog"]')
+          .forEach(rewriteNode);
+      }
+    }));
+  });
+
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+
+})();
