@@ -6,6 +6,11 @@ A super easy fix with 5 steps.
 tested and it works perfectly!
 
 FOR IOS THE WHOLE IDEA IS THE SAME, BUT YOU HAVE TO USE A WORKAROUND- ORION BROWSER WITH VIOLENT MONKEY
+Scroll down to other browsers for nore info
+             ||
+             ||
+             ||
+             \/
 
 
 # MegaCloud Domain Redirect - Userscript
