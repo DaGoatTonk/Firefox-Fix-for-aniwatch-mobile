@@ -1,0 +1,181 @@
+// ==UserScript==
+// @name         MegaCloud Domain Redirect + Fullscreen Fix
+// @namespace    http://tampermonkey.net/
+// @version      2.0
+// @description  Fixes megacloud.blog → megacloud.tv and restores fullscreen
+// @match        *://*.aniwatchtv.to/*
+// @match        *://*.megacloud.blog/*
+// @grant        none
+// @run-at       document-start
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  const OLD = 'megacloud.blog';
+  const NEW = 'megacloud.tv';
+  const re = /megacloud\.blog/g;
+
+  const rewrite = str => typeof str === 'string' ? str.replace(re, NEW) : str;
+
+  // ─────────────────────────────
+  // HARD REDIRECT IF ON OLD DOMAIN
+  // ─────────────────────────────
+  if (location.hostname.includes(OLD)) {
+    location.replace(location.href.replace(OLD, NEW));
+    return;
+  }
+
+  // ─────────────────────────────
+  // NETWORK LAYER PATCHES
+  // ─────────────────────────────
+
+  const _fetch = window.fetch;
+  window.fetch = function (input, init) {
+    if (typeof input === 'string') input = rewrite(input);
+    else if (input instanceof Request) input = new Request(rewrite(input.url), input);
+    return _fetch.call(this, input, init);
+  };
+
+  const _open = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+    return _open.call(this, method, rewrite(url), ...rest);
+  };
+
+  const _WebSocket = window.WebSocket;
+  window.WebSocket = function (url, protocols) {
+    return new _WebSocket(rewrite(url), protocols);
+  };
+
+  const _Worker = window.Worker;
+  window.Worker = function (url, options) {
+    return new _Worker(rewrite(url), options);
+  };
+
+  const _sendBeacon = navigator.sendBeacon;
+  navigator.sendBeacon = function (url, data) {
+    return _sendBeacon.call(this, rewrite(url), data);
+  };
+
+  // ─────────────────────────────
+  // DOM CREATION / ATTRIBUTE PATCHES
+  // ─────────────────────────────
+
+  const _createElement = document.createElement.bind(document);
+  document.createElement = function (tag, ...rest) {
+    const el = _createElement(tag, ...rest);
+
+    if (tag.toLowerCase() === 'script') {
+      const desc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+      Object.defineProperty(el, 'src', {
+        set(val) { desc.set.call(this, rewrite(val)); },
+        get() { return desc.get.call(this); },
+        configurable: true
+      });
+    }
+
+    return el;
+  };
+
+  const _setAttribute = Element.prototype.setAttribute;
+  Element.prototype.setAttribute = function (name, value) {
+    return _setAttribute.call(this, name, rewrite(value));
+  };
+
+  // ─────────────────────────────
+  // STRING INJECTION PATCHES
+  // ─────────────────────────────
+
+  const _eval = window.eval;
+  window.eval = function (code) {
+    return _eval.call(this, rewrite(code));
+  };
+
+  const _Function = window.Function;
+  window.Function = function (...args) {
+    return _Function(...args.map(rewrite));
+  };
+  Object.setPrototypeOf(window.Function, _Function);
+  window.Function.prototype = _Function.prototype;
+
+  const innerDesc = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+  Object.defineProperty(Element.prototype, 'innerHTML', {
+    set(val) { innerDesc.set.call(this, rewrite(val)); },
+    get() { return innerDesc.get.call(this); },
+    configurable: true
+  });
+
+  const _insertAdjacentHTML = Element.prototype.insertAdjacentHTML;
+  Element.prototype.insertAdjacentHTML = function (pos, html) {
+    return _insertAdjacentHTML.call(this, pos, rewrite(html));
+  };
+
+  // ─────────────────────────────
+  // MUTATION OBSERVER (LAST LINE DEFENSE)
+  // ─────────────────────────────
+
+  function rewriteNode(node) {
+    if (!node || !node.getAttribute) return;
+
+    ['src', 'href', 'data-src'].forEach(attr => {
+      const val = node.getAttribute(attr);
+      if (val && val.includes(OLD)) {
+        node.setAttribute(attr, rewrite(val));
+      }
+    });
+  }
+
+  new MutationObserver(mutations => {
+    for (const m of mutations) {
+      for (const n of m.addedNodes) {
+        rewriteNode(n);
+        if (n.querySelectorAll) {
+          n.querySelectorAll(`[src*="${OLD}"],[href*="${OLD}"],[data-src*="${OLD}"]`)
+            .forEach(rewriteNode);
+        }
+      }
+    }
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
+  // ─────────────────────────────
+  // FULLSCREEN — HARD OVERRIDE FIX
+  // ─────────────────────────────
+
+  function forceFullscreen(video) {
+    if (!video) return;
+
+    if (video.requestFullscreen) return video.requestFullscreen();
+    if (video.webkitRequestFullscreen) return video.webkitRequestFullscreen();
+    if (video.webkitEnterFullscreen) return video.webkitEnterFullscreen(); // mobile fallback
+  }
+
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('[class*="full"], [id*="full"]');
+    if (!btn) return;
+
+    const video = document.querySelector('video');
+    if (!video) return;
+
+    // Kill site handler
+    e.stopImmediatePropagation();
+    e.preventDefault();
+
+    forceFullscreen(video);
+  }, true);
+
+  // ─────────────────────────────
+  // DEBUG HOOK (optional but useful)
+  // ─────────────────────────────
+
+  ['requestFullscreen', 'webkitRequestFullscreen', 'webkitEnterFullscreen'].forEach(fn => {
+    const proto = Element.prototype;
+    if (proto[fn]) {
+      const orig = proto[fn];
+      proto[fn] = function (...args) {
+        console.log('[FS CALL]', fn);
+        return orig.apply(this, args);
+      };
+    }
+  });
+
+})();
