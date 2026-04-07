@@ -5,7 +5,7 @@ A script for Firefox/Kiwi/Brave/Extension supporting mobile browsers with the Ta
 A super easy fix with 5 steps.
 tested and it works perfectly!
 
-FOR IOS THE WHOLE IDEA IS THE SAME, BUT YOU HAVE TO USE WORKAROUND- ORION BROWSER WITH VIOLENT MONKEY
+FOR IOS THE WHOLE IDEA IS THE SAME, BUT YOU HAVE TO USE A WORKAROUND- ORION BROWSER WITH VIOLENT MONKEY
 
 
 # MegaCloud Domain Redirect - Userscript
