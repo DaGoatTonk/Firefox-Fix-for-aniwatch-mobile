@@ -1,5 +1,5 @@
 # Firefox/Brave/Kiwi/Extension supporting browsers-Fix-for-aniwatch-mobile
-A script for Firefox mobile with the Tampermonkey extension, its primary use is to intercept and redirect the requests from and to megacloud.blog to megacloud.tv
+A script for Firefox/Kiwi/Brave/Extension supporting mobile browsers with the Tampermonkey extension, its primary use is to intercept and redirect the requests from and to megacloud.blog to megacloud.tv
 
 
 A super easy fix with 5 steps.
@@ -26,9 +26,9 @@ iOS users: Use Orion Browser by Kagi instead of Firefox. It supports Firefox ext
 
 ## Installation
 
-### Step 1 - Install Firefox for Android
+### Step 1 - Install Firefox/Kiwi/Brave/etc. for Android
 
-Download and install Firefox from the Google Play Store if you don't have it already.
+Download from the Google Play Store if you don't have it already.
 
 ### Step 2 - Install Tampermonkey
 
