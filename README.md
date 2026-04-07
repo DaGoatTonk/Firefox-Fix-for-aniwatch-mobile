@@ -1,5 +1,6 @@
-# Firefox/Brave/Kiwi/Extension supporting browsers-Fix-for-aniwatch-mobile
+# Firefox/Brave/Kiwi/Extension supporting browsers-Fix-for-aniwatch-mobile and PC
 A script for Firefox/Kiwi/Brave/Extension supporting mobile browsers with the Tampermonkey extension, its primary use is to intercept and redirect the requests from and to megacloud.blog to megacloud.tv
+Also usable with PC browsers such as Opera Edge Chrome and so on.
 
 
 A super easy fix with 5 steps.
