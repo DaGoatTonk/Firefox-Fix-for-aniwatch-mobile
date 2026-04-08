@@ -1,17 +1,17 @@
 # Firefox/Brave/Kiwi/Extension supporting browsers-Fix-for-aniwatch-mobile and PC
 A script for Firefox/Kiwi/Brave/Extension supporting mobile browsers with the Tampermonkey extension, its primary use is to intercept and redirect the requests from and to megacloud.blog to megacloud.tv
-Also usable with PC browsers such as Opera Edge Chrome and so on.
+Also usable with PC browsers such as Opera(GX) Edge Chrome and so on.
 
+Works on almost any browser including those on mobile and PC.
+
+DISCLAIMER: I WON'T MAKE A SOLUTION FOR CHROME MOBILE, SINCE IT IS A WASTE OF TIME, CONSIDERING THAT IT DOESNT OFFER EXTENSIONS, WHICH MEANS YOU NEED A ROOTED DEVICE FOR IT TO WORK (WHICH IS OUT OF THE QUESTION FOR MANY PPL).
 
 A super easy fix with 5 steps.
 tested and it works perfectly!
 
 FOR IOS THE WHOLE IDEA IS THE SAME, BUT YOU HAVE TO USE A WORKAROUND- ORION BROWSER WITH VIOLENT MONKEY
-Scroll down to other browsers for nore info
-             ||
-             ||
-             ||
-             \/
+Scroll down to other browsers for more info, the whole principle is basically the same, so you can follow the steps shown below.
+            
 
 
 # MegaCloud Domain Redirect - Userscript
