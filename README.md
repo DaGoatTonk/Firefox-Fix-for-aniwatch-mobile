@@ -1,4 +1,4 @@
-# Firefox/Brave/Kiwi/Opera/Edge/Chrome(PC)/etc. Extension supporting browsers-Fix-for-aniwatch-mobile and PC with Tampermonkey/Violent Monkey
+# Firefox/Brave/Kiwi/Opera/Edge/Chrome(PC)/Safari/Orion/etc. Extension supporting browsers-Fix-for-aniwatch-mobile and PC with Tampermonkey/Violent Monkey
 
 A script for supporting mobile and PC browsers with the Tampermonkey extension, its primary use is to intercept and redirect the requests from and to megacloud.blog to megacloud.tv
 Also usable with PC browsers such as Opera(GX) Edge Chrome and so on.
